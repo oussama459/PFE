@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'login_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key? key}) : super(key: key);
@@ -22,7 +23,6 @@ class _SignupPageState extends State<SignupPage> {
   bool _isLoading = false;
   String _errorMessage = "";
   String _userType = "Client"; // Par défaut
-  bool _showFields = false;
 
   Future<void> _signup() async {
     setState(() {
@@ -99,13 +99,33 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
+  // Fonction pour ouvrir Google Maps avec l'adresse
+  Future<void> _openMap(String address) async {
+    if (address.isEmpty) {
+      setState(() {
+        _errorMessage = "Veuillez entrer une adresse valide.";
+      });
+      return;
+    }
+
+    final Uri googleMapsUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}");
+
+    if (await canLaunchUrl(googleMapsUri)) {
+      await launchUrl(googleMapsUri, mode: LaunchMode.externalApplication);
+    } else {
+      setState(() {
+        _errorMessage = "Impossible d'ouvrir Google Maps.";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blueAccent, Colors.lightBlue.shade200], // Dégradé
+            colors: [Colors.blueAccent, Colors.lightBlue.shade200],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -146,11 +166,11 @@ class _SignupPageState extends State<SignupPage> {
                       SizedBox(height: 16.0),
                       _buildTextField(boutiqueNom, "Nom de la boutique", Icons.store),
                       SizedBox(height: 16.0),
-                      _buildTextField(adresse, "Adresse", Icons.location_on),
+                      _buildTextField(adresse, "Adresse", Icons.location_on, isAddress: true),
                     ],
                     SizedBox(height: 24.0),
                     if (_errorMessage.isNotEmpty)
-                      Text(_errorMessage, style: TextStyle(color: Colors.red)),
+                      Text(_errorMessage, style: TextStyle(color: Colors.blueAccent)),
                     SizedBox(height: 10),
                     _isLoading
                         ? CircularProgressIndicator()
@@ -184,13 +204,26 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool obscure = false}) {
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool obscure = false, bool isAddress = false}) {
     return TextField(
       controller: controller,
       obscureText: obscure,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        prefixIcon: isAddress
+            ? GestureDetector(
+          onTap: () {
+            if (controller.text.isNotEmpty) {
+              _openMap(controller.text);
+            } else {
+              setState(() {
+                _errorMessage = "Veuillez entrer une adresse valide.";
+              });
+            }
+          },
+          child: Icon(icon, color: Colors.blueAccent),
+        )
+            : Icon(icon, color: Colors.blueAccent),
         border: OutlineInputBorder(),
       ),
     );
@@ -205,8 +238,6 @@ class _SignupPageState extends State<SignupPage> {
           backgroundColor: _userType == type ? Colors.blueAccent : Colors.white,
           foregroundColor: _userType == type ? Colors.white : Colors.blueAccent,
           side: BorderSide(color: Colors.blueAccent),
-          padding: EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
         onPressed: () {
           setState(() {
@@ -215,4 +246,5 @@ class _SignupPageState extends State<SignupPage> {
         },
       ),
     );
-  }}
+  }
+}

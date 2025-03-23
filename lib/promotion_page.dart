@@ -8,6 +8,7 @@ class PromotionPage extends StatefulWidget {
   final String userId;
   final String boutiqueNom;
 
+
   PromotionPage({required this.userId, required this.boutiqueNom});
 
   @override
@@ -136,7 +137,7 @@ class _PromotionPageState extends State<PromotionPage> {
   }
 
 
-  /// 🔹 Supprimer une promotion
+
   /// 🔹 Supprimer une promotion avec confirmation
   Future<void> _supprimerPromotion(int index) async {
     showDialog(
@@ -157,9 +158,11 @@ class _PromotionPageState extends State<PromotionPage> {
                 Navigator.of(context).pop(); // Fermer la boîte de dialogue
                 final promotionId = promotions[index]['id'];
                 try {
+                  final promotionId = promotions[index]['promo_id']; // Utiliser promo_id au lieu de id
                   final response = await http.delete(
-                    Uri.parse("http://192.168.1.13/supprimer_promotion.php?id=$promotionId"),
+                    Uri.parse("http://192.168.1.13/supprimer_promotion.php?promo_id=$promotionId"),
                   );
+
 
                   if (response.statusCode == 200) {
                     var data = json.decode(response.body);
@@ -228,7 +231,7 @@ class _PromotionPageState extends State<PromotionPage> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse("http://192.168.1.13/add_promotion.php"),
+        Uri.parse("http://192.168.195.205/add_promotion.php"),
       );
 
       request.fields['commercant_id'] = widget.userId;
@@ -280,7 +283,7 @@ class _PromotionPageState extends State<PromotionPage> {
       Uri.parse("http://192.168.1.13/modifier_promotion.php"),
     );
 
-    request.fields['id'] = promotions[index]['id'];
+    request.fields['promo_id'] = promotions[index]['promo_id'].toString();
     request.fields['commercant_id'] = widget.userId;
     request.fields['categori'] = _categoriController.text;
     request.fields['date_debut'] = _dateDebutController.text;
@@ -416,6 +419,11 @@ class _PromotionPageState extends State<PromotionPage> {
     if (!isEditing) {
       _dateDebutController.text = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
     }
+    if (isEditing) {
+      DateTime now = DateTime.now();
+      _dateDebutController.text = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    }
+
 
     showModalBottomSheet(
       context: context,
@@ -499,7 +507,7 @@ class _PromotionPageState extends State<PromotionPage> {
               TextField(controller: _prixController, decoration: InputDecoration(labelText: "Prix")),
               TextField(controller: _pourcentageController, decoration: InputDecoration(labelText: "Pourcentage")),
               SizedBox(height: 20),
-              ElevatedButton(
+               ElevatedButton(
                 onPressed: () {
                   if (selectedCategory == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
