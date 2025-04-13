@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text("Veuillez remplir tous les champs")),
       );
       return;
+      
     }
 
     setState(() {
@@ -33,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.1.13/login.php"),
+        Uri.parse("http://192.168.1.17/login.php"),
         headers: {"Content-Type": "application/json"},
         body: json.encode({"email": email, "password": password}),
       );

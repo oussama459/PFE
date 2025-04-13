@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'promotion_page.dart';
+import 'AccueilPage.dart';
+import 'FavorisPage.dart';
+import 'login_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final String userId;
@@ -30,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   File? _imageFile;
   String? _imagePath;
   final ImagePicker _picker = ImagePicker();
+  int _selectedIndex = 2;
 
   @override
   void initState() {
@@ -69,6 +73,40 @@ class _ProfilePageState extends State<ProfilePage> {
     return path;
   }
 
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AccueilPage(
+            userId: widget.userId,
+            nom: widget.nom,
+            email: widget.email,
+          ),
+        ),
+      );
+    } else if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FavorisPage(
+            userId: widget.userId,
+            nom: widget.nom,
+            email: widget.email,
+          ),
+        ),
+      );
+    } else if (index == 3) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+            (route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,10 +136,21 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favoris'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+          BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Déconnexion'),
+        ],
+      ),
     );
   }
 
-  // 📸 Widget pour l'image de profil
   Widget _buildProfileImage() {
     return GestureDetector(
       onTap: _pickImage,
@@ -118,7 +167,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🏷️ Widget pour afficher les informations de l'utilisateur
   Widget _buildUserInfo() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -137,7 +185,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🏪 Widget pour afficher les informations de la boutique (si commerçant)
   Widget _buildShopInfo() {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -162,7 +209,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🎯 Widget pour le bouton "Mes Promotions"
   Widget _buildPromotionButton() {
     return ElevatedButton.icon(
       onPressed: () {
@@ -187,11 +233,14 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🚪 Widget pour le bouton de déconnexion
   Widget _buildLogoutButton() {
     return ElevatedButton.icon(
       onPressed: () {
-        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+              (route) => false,
+        );
       },
       icon: Icon(Icons.logout, color: Colors.white),
       label: Text("Se Déconnecter"),
@@ -204,7 +253,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 📌 Widget utilitaire pour afficher une ligne d'information
   Widget _infoRow(IconData icon, String label, String value) {
     return Row(
       children: [
@@ -222,4 +270,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-

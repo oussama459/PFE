@@ -46,7 +46,7 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    String uri = "http://192.168.1.13/crude.php";
+    String uri = "http://192.168.1.17/crude.php";
 
     Map<String, dynamic> body = {
       "type": _userType,

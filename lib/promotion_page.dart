@@ -8,7 +8,6 @@ class PromotionPage extends StatefulWidget {
   final String userId;
   final String boutiqueNom;
 
-
   PromotionPage({required this.userId, required this.boutiqueNom});
 
   @override
@@ -36,7 +35,7 @@ class _PromotionPageState extends State<PromotionPage> {
   Future<void> _fetchPromotions() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.1.13/get_promotions.php?commercant_id=${widget.userId}"),
+        Uri.parse("http://192.168.1.17/get_promotions.php?commercant_id=${widget.userId}"),
       );
 
       if (response.statusCode == 200) {
@@ -89,7 +88,7 @@ class _PromotionPageState extends State<PromotionPage> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse("http://192.168.1.13/add_promotion.php"),
+      Uri.parse("http://192.168.1.17/add_promotion.php"),
     );
 
     request.fields['commercant_id'] = widget.userId;
@@ -160,7 +159,7 @@ class _PromotionPageState extends State<PromotionPage> {
                 try {
                   final promotionId = promotions[index]['promo_id']; // Utiliser promo_id au lieu de id
                   final response = await http.delete(
-                    Uri.parse("http://192.168.1.13/supprimer_promotion.php?promo_id=$promotionId"),
+                    Uri.parse("http://192.168.1.17/supprimer_promotion.php?promo_id=$promotionId"),
                   );
 
 
@@ -231,7 +230,7 @@ class _PromotionPageState extends State<PromotionPage> {
 
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse("http://192.168.195.205/add_promotion.php"),
+        Uri.parse("http://192.168.1.17/add_promotion.php"),
       );
 
       request.fields['commercant_id'] = widget.userId;
@@ -280,7 +279,7 @@ class _PromotionPageState extends State<PromotionPage> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse("http://192.168.1.13/modifier_promotion.php"),
+      Uri.parse("http://192.168.1.17/modifier_promotion.php"),
     );
 
     request.fields['promo_id'] = promotions[index]['promo_id'].toString();
@@ -507,7 +506,7 @@ class _PromotionPageState extends State<PromotionPage> {
               TextField(controller: _prixController, decoration: InputDecoration(labelText: "Prix")),
               TextField(controller: _pourcentageController, decoration: InputDecoration(labelText: "Pourcentage")),
               SizedBox(height: 20),
-               ElevatedButton(
+              ElevatedButton(
                 onPressed: () {
                   if (selectedCategory == null) {
                     ScaffoldMessenger.of(context).showSnackBar(

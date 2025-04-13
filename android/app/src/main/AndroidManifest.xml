@@ -55,12 +55,16 @@
             />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="TA_CLE_API_ICI" />
+            android:value="AIzaSyAi4lwbDgaWfACbIcn5ksxHCfXvw_1cyVg"/>
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
 
     </application>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
 
     <!-- Ajout de queries pour que l'application puisse interagir avec d'autres applications -->
     <queries>
